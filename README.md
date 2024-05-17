@@ -25,6 +25,7 @@ code to install `git-commit-ts-mode`:
 
 ```elisp
 (use-package git-commit-ts-mode
-  :elpaca (git-commit-ts-mode :repo "~/projects/git-commit-ts-mode")
+  :elpaca (git-commit-ts-mode :host github
+                              :repo "danilshvalov/git-commit-ts-mode")
   :mode "\\COMMIT_EDITMSG\\'")
 ```
