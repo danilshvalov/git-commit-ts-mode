@@ -1,3 +1,4 @@
+
 ;;; git-commit-ts-mode.el --- A tree-sitter based major mode for editing Git commit messages in GNU Emacs.
 
 (require 'treesit)
@@ -143,6 +144,32 @@ The underlined text will be highlighted using `git-commit-token-face'."
 The underlined text will be highlighted using `git-commit-value-face'."
   :group 'git-commit-faces)
 
+(defface git-commit-breaking-change-token-face '((t :inherit font-lock-warning-face))
+  "Face used for breaking change tokens. Example:
+
+   refactor(some-module): some commit message
+
+   BREAKING CHANGE: everything is broken
+   └──────┬───────┘
+          └── breaking change token
+
+The underlined text will be highlighted using
+`git-commit-breaking-change-token-face'."
+  :group 'git-commit-faces)
+
+(defface git-commit-breaking-change-value-face '((t :inherit font-lock-variable-name-face))
+  "Face used for breaking change values. Example:
+
+   refactor(some-module): some commit message
+
+   BREAKING CHANGE: everything is broken
+                    └────────┬─────────┘
+                   breaking change value
+
+The underlined text will be highlighted using
+`git-commit-breaking-change-value-face'."
+  :group 'git-commit-faces)
+
 (defface git-commit-filepath-face '((t :inherit font-lock-variable-name-face))
   "Face used for filepath. Example:
 
@@ -256,9 +283,9 @@ The underlined text will be highlighted using `git-commit-branch-face'."
      (trailer
       (value) @git-commit-value-face)
      (breaking_change
-      (token) @git-commit-token-face)
+      (token) @git-commit-breaking-change-token-face)
      (breaking_change
-      (value) @git-commit-value-face)
+      (value) @git-commit-breaking-change-value-face)
      (generated_comment
       (title) @git-commit-token-face)
      (generated_comment
