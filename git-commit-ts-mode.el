@@ -1,3 +1,5 @@
+;;; git-commit-ts-mode.el --- A tree-sitter based major mode for editing Git commit messages in GNU Emacs.
+
 (require 'treesit)
 
 (declare-function treesit-parser-create "treesit.c")
@@ -15,55 +17,179 @@
   :group 'git-commit)
 
 (defface git-commit-comment-face '((t :inherit font-lock-comment-face))
-  "Face used for comments."
+  "Face used for comments. Example:
+
+   some commit message
+
+   # this is my comment
+   └──────────────────┘
+
+The underlined text will be highlighted using `git-commit-comment-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-title-face '((t :inherit font-lock-string-face))
-  "Face used for titles."
+  "Face used for commit titles. Example:
+
+   feat(some-module): some commit message
+                      └────────┬────────┘
+                         commit title
+
+or:
+
+   some commit message without prefix
+   └───────────────┬────────────────┘
+             commit title
+
+The underlined text will be highlighted using `git-commit-title-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-overflow-face '((t :inherit error))
-  "Face used for titles."
+  "Face used for overflowed (> 50) commit titles. Example:
+
+                     50 characters
+   ┌───────────────────────┴────────────────────────┐
+   feat(some-module): lorem ipsum dolor sit amet, consectetur adipiscing elit
+                                                     └───────────┬──────────┘
+                                                      overflowed commit title
+
+The underlined text will be highlighted using `git-commit-overflow-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-prefix-face '((t :inherit font-lock-function-name-face))
-  "Face used for prefixes."
+  "Face used for commit prefixes. Example:
+
+   refactor(some-module): some commit message
+   └──────────┬─────────┘
+        commit prefix
+
+or:
+
+   refactor: some commit message
+   └───┬───┘
+       └── commit prefix
+
+The underlined text will be highlighted using `git-commit-prefix-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-type-face '((t :inherit font-lock-keyword-face))
-  "Face used for types."
+  "Face used for commit prefix types. Example:
+
+   refactor(some-module): some commit message
+   └──┬───┘
+      └── commit prefix type
+
+or:
+
+   refactor: some commit message
+   └──┬───┘
+      └── commit prefix type
+
+The underlined text will be highlighted using `git-commit-type-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-scope-face '((t :inherit font-lock-variable-name-face))
-  "Face used for scope."
+  "Face used for commit prefix scopes. Example:
+
+   refactor(some-module): some commit message
+            └────┬────┘
+        commit prefix scope
+
+The underlined text will be highlighted using `git-commit-scope-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-punctuation-delimiter-face '((t :inherit font-lock-punctuation-face))
-  "Face used for punctuations."
+  "Face used for common punctuation delimiters. Example:
+
+   refactor(some-module): some commit message
+           ^           ^^
+           └───────────┴┴─ common punctuation delimiters
+
+The underlined with caret text will be highlighted using
+`git-commit-punctuation-delimiter-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-punctuation-special-face '((t :inherit font-lock-warning-face))
-  "Face used for punctuations."
+  "Face used for special punctuation delimiters. Example:
+
+   refactor(some-module)!: some commit message
+                        ^
+                        └── special punctuation delimiter
+
+The underlined with caret text will be highlighted using
+`git-commit-punctuation-special-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-token-face '((t :inherit font-lock-builtin-face))
-  "Face used for tokens."
+  "Face used for tokens. Example:
+
+   refactor(some-module): some commit message
+
+   Closes: ABC-12345
+   └──┬──┘
+      └── token
+
+The underlined text will be highlighted using `git-commit-token-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-value-face '((t :inherit font-lock-variable-name-face))
-  "Face used for values."
+  "Face used for values. Example:
+
+   refactor(some-module): some commit message
+
+   Closes: ABC-12345
+           └───┬───┘
+             value
+
+The underlined text will be highlighted using `git-commit-value-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-filepath-face '((t :inherit font-lock-variable-name-face))
-  "Face used for filepath."
+  "Face used for filepath. Example:
+
+   # Please enter the commit message for your changes. Lines starting
+   # with '#' will be ignored, and an empty message aborts the commit.
+   #
+   # On branch main
+   # Changes to be committed:
+   #	renamed:    some-file -> other-file
+                    └───┬───┘    └───┬────┘
+                        └─────┬──────┘
+                          filepath
+   #
+
+The underlined text will be highlighted using `git-commit-filepath-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-change-face '((t :inherit font-lock-builtin-face))
-  "Face used for change."
+  "Face used for changes. Example:
+
+   # Please enter the commit message for your changes. Lines starting
+   # with '#' will be ignored, and an empty message aborts the commit.
+   #
+   # On branch main
+   # Changes to be committed:
+   #	renamed:    some-file -> other-file
+        └──┬───┘
+           └── change
+   #
+
+The underlined text will be highlighted using `git-commit-change-face'."
   :group 'git-commit-faces)
 
 (defface git-commit-branch-face '((t :inherit font-lock-keyword-face))
-  "Face used for branch name."
+  "Face used for branch names. Example:
+
+   # Please enter the commit message for your changes. Lines starting
+   # with '#' will be ignored, and an empty message aborts the commit.
+   #
+   # On branch my-branch
+               └───┬───┘
+                   └── branch name
+   # Changes to be committed:
+   #	renamed:    some-file -> other-file
+   #
+
+The underlined text will be highlighted using `git-commit-branch-face'."
   :group 'git-commit-faces)
 
 (defvar git-commit--treesit-font-lock-settings
@@ -153,3 +279,5 @@
     (add-to-list 'auto-mode-alist '("\\.COMMIT_EDITMSG\\'" . git-commit-ts-mode))))
 
 (provide 'git-commit-ts-mode)
+
+;;; git-commit-ts-mode.el ends here
