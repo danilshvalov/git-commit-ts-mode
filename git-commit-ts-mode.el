@@ -1,6 +1,19 @@
+;;; git-commit-ts-mode.el --- Tree-sitter support for Git commit messages -*- lexical-binding: t; -*-
 
-;;; git-commit-ts-mode.el --- A tree-sitter based major mode for editing Git commit messages in GNU Emacs.
+;; Copyright (C) 2024 Daniil Shvalov
 
+;; Author: Daniil Shvalov <daniil.shvalov@gmail.com>
+;; Version: 1.0
+;; Package-Requires: ((emacs "29.1"))
+;; License: GPL-3.0-or-later
+;; Keywords: tree-sitter, git
+;; Homepage: https://github.com/danilshvalov/git-commit-ts-mode
+
+;;; Commentary:
+
+;; A tree-sitter based major mode for editing Git commit messages in GNU Emacs
+
+;;; Code:
 (require 'treesit)
 
 (declare-function treesit-parser-create "treesit.c")
