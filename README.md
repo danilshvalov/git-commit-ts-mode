@@ -2,6 +2,8 @@
 
 A tree-sitter based major mode for editing Git commit messages in GNU Emacs.
 
+![git-commit-ts-mode](https://github.com/danilshvalov/git-commit-ts-mode/assets/57654917/b5292190-651d-4794-abe1-6ac9702142ec)
+
 ## Quick start
 
 ### Grammar installation
