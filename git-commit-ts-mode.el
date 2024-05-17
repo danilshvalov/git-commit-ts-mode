@@ -6,7 +6,7 @@
 ;; Version: 1.0
 ;; Package-Requires: ((emacs "29.1"))
 ;; License: GPL-3.0-or-later
-;; Keywords: tree-sitter, git
+;; Keywords: tree-sitter, git, faces
 ;; Homepage: https://github.com/danilshvalov/git-commit-ts-mode
 
 ;;; Commentary:
