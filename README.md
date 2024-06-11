@@ -29,3 +29,12 @@ code to install `git-commit-ts-mode`:
                               :repo "danilshvalov/git-commit-ts-mode")
   :mode "\\COMMIT_EDITMSG\\'")
 ```
+
+### Magit integration
+
+To use `git-commit-ts-mode` in the commit buffer, you need to change the value
+of the `git-commit-major-mode` variable, for example, as follows:
+
+```elisp
+(setq git-commit-major-mode 'git-commit-ts-mode)
+```
