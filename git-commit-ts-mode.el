@@ -43,7 +43,15 @@
 
 (defgroup git-commit-ts-faces nil
   "Faces used by git commit."
-  :group 'git-commit)
+  :group 'git-commit-ts)
+
+(defcustom git-commit-ts-max-message-size 72
+  "The maximum allowed commit message size. If the specified limit is exceeded,
+the rest of the message will be highlighted using
+`git-commit-ts-overflow-face'."
+  :type 'integer
+  :safe 'integerp
+  :group 'git-commit-ts)
 
 (defface git-commit-ts-comment-face '((t :inherit font-lock-comment-face))
   "Face used for comments. Example:
@@ -247,6 +255,16 @@ The underlined text will be highlighted using `git-commit-ts-change-face'."
 The underlined text will be highlighted using `git-commit-ts-branch-face'."
   :group 'git-commit-ts-faces)
 
+(defun git-commit-ts--fontify-title (node _ _ _ &rest _)
+  (let* ((start (treesit-node-start node))
+         (end (treesit-node-end node))
+         (length (- end start))
+         (separator (+ start git-commit-ts-max-message-size 1)))
+    (if (<= length git-commit-ts-max-message-size)
+        (treesit-fontify-with-override start end 'git-commit-ts-title-face nil)
+      (treesit-fontify-with-override start separator 'git-commit-ts-title-face nil)
+      (treesit-fontify-with-override separator end 'git-commit-ts-overflow-face t))))
+
 (defvar git-commit-ts-font-lock-settings
   (treesit-font-lock-rules
    :feature 'comment
@@ -257,13 +275,7 @@ The underlined text will be highlighted using `git-commit-ts-branch-face'."
 
    :feature 'title
    :language 'gitcommit
-   '((subject) @git-commit-ts-title-face)
-
-   ;; :feature 'overflow
-   ;; :language 'gitcommit
-   ;; :override t
-   ;; '((subject
-   ;;    (overflow) @git-commit-ts-overflow-face))
+   '((subject) @git-commit-ts--fontify-title)
 
    :feature 'prefix
    :language 'gitcommit
