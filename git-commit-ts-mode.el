@@ -259,11 +259,11 @@ The underlined text will be highlighted using `git-commit-ts-branch-face'."
    :language 'gitcommit
    '((subject) @git-commit-ts-title-face)
 
-   :feature 'overflow
-   :language 'gitcommit
-   :override t
-   '((subject
-      (overflow) @git-commit-ts-overflow-face))
+   ;; :feature 'overflow
+   ;; :language 'gitcommit
+   ;; :override t
+   ;; '((subject
+   ;;    (overflow) @git-commit-ts-overflow-face))
 
    :feature 'prefix
    :language 'gitcommit
