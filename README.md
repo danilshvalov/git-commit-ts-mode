@@ -20,8 +20,7 @@ install the latest [tree-sitter-gitcommit](https://github.com/gbprod/tree-sitter
 
 ### Package installation
 
-If you use [elpaca](https://github.com/progfolio/elpaca) and [use-package](https://github.com/jwiegley/use-package) to manage packages in Emacs, use the following
-code to install `git-commit-ts-mode`:
+If you use [elpaca](https://github.com/progfolio/elpaca) and [use-package](https://github.com/jwiegley/use-package) to manage packages in Emacs, use the following code to install `git-commit-ts-mode`:
 
 ```elisp
 (use-package git-commit-ts-mode
@@ -30,10 +29,15 @@ code to install `git-commit-ts-mode`:
   :mode "\\COMMIT_EDITMSG\\'")
 ```
 
+## Configuration
+
+### Max commit message size
+
+To specify the maximum allowed message size, use the `git-commit-ts-max-message-size` variable (default value is 72). If the specified limit is exceeded, the rest of the message will be highlighted using `git-commit-ts-overflow-face`.
+
 ### Magit integration
 
-To use `git-commit-ts-mode` in the Magit commit buffer, you need to change the
-value of the `git-commit-major-mode` variable, for example, as follows:
+To use `git-commit-ts-mode` in the Magit commit buffer, you need to change the value of the `git-commit-major-mode` variable, for example, as follows:
 
 ```elisp
 (setq git-commit-major-mode 'git-commit-ts-mode)
