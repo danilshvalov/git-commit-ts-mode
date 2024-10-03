@@ -281,7 +281,7 @@ The underlined text will be highlighted using `git-commit-ts-branch-face'."
    :language 'gitcommit
    :override t
    '((subject
-      (subject_prefix) @git-commit-ts-prefix-face))
+      (prefix) @git-commit-ts-prefix-face))
 
    :feature 'prefix
    :language 'gitcommit
