@@ -29,6 +29,8 @@ If you use [elpaca](https://github.com/progfolio/elpaca) and [use-package](https
   :mode "\\COMMIT_EDITMSG\\'")
 ```
 
+If you use [treesit-auto](https://github.com/renzmann/treesit-auto), once this [PR](https://github.com/renzmann/treesit-auto/pull/121) is merged, all you'll have to do is install the package.
+
 ## Configuration
 
 ### Max commit message size
