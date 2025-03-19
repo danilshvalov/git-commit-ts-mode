@@ -30,6 +30,7 @@
 
 ;;; Code:
 (require 'treesit)
+(require 'thingatpt)
 
 (declare-function treesit-parser-create "treesit.c")
 (declare-function treesit-induce-sparse-tree "treesit.c")
@@ -344,6 +345,74 @@ The underlined text will be highlighted using `git-commit-ts-branch-face'."
                   (punctuation)))
     (treesit-major-mode-setup)
     (add-to-list 'auto-mode-alist '("\\.COMMIT_EDITMSG\\'" . git-commit-ts-mode))))
+
+(defvar git-commit-ts-email-regexp
+  (pcase-let* ((`(,user ,domain)
+                (string-split thing-at-point-email-regexp
+                              "@")))
+    (rx-to-string`(seq (regexp ,user)
+                       "@"
+                       (zero-or-one (regexp ,domain)))))
+  "A regular expression matching a partial email address.
+A partial email address occurs commonly while it is being typed
+in.  As soon as character `@' is typed `flycheck' tries to spell
+check the last word.  Unfortunately, such a partially entered
+word is not recognised as `email' by `thing-at-point'.  Hence,
+the `thing-at-point-email-regexp' is modified to allow for the
+domain part to be optional.")
+
+(defun git-commit-ts--flyspell-verify ()
+  "Used for `flyspell-generic-check-word-predicate' in `git-commit-ts-mode'."
+  (unless (eql (point) (point-min))
+    (let* ((node (treesit-node-at (point)))
+           (node-type (treesit-node-type node)))
+      (when (equal node-type "value")
+        (setq node-type (treesit-node-type (treesit-node-parent node))))
+      (when (member node-type '("subject" "message_line"
+                                "trailer" "breaking_change"))
+        (cond
+         ;; Tokens for trailer and breaking change are only parsed
+         ;; after colon and space are entered. This leads to spell
+         ;; checking them, which is probably best to avoid.
+         ((and (equal node-type "message_line")
+               (string-match-p
+                (rx string-start
+                    (or (seq "BREAKING" (or " " "-") "CHANGE")
+                        (one-or-more (any (?a . ?z) (?A . ?Z) "-")))
+                    (zero-or-more " ") (or ":" ?\xff1a))
+                (buffer-substring (pos-bol) (min (1+ (point))
+                                                 (point-max)))))
+          nil)
+         ;; `thing-at-point' returns nil for `email' when it ends
+         ;; with an `@'. This, however is quite normal, for example
+         ;; when in the middle of typing an address.
+         ((when-let* ((thing-at-point-email-regexp git-commit-ts-email-regexp))
+            (thing-at-point 'email))
+          nil)
+         ;; User and team @mentions contain characters `@' and
+         ;; `/'. Neither is a part of a word, so let's temporarily
+         ;; modify syntax table such that they are grabbed.
+         ((let ((table (copy-syntax-table)))
+            (modify-syntax-entry ?@ "w" table)
+            (modify-syntax-entry ?/ "w" table)
+            (with-syntax-table table
+              (string-match-p
+               (rx-let ((identifier
+                         (seq alphanumeric
+                              (repeat 0 38 (or alphanumeric "-")))))
+                 (rx string-start
+                     "@"
+                     (zero-or-one identifier (zero-or-one "/"))
+                     (zero-or-one identifier)
+                     string-end))
+               (thing-at-point 'word))))
+          nil)
+         ;; Spell check everything else
+         (t t))))))
+
+(put #'git-commit-ts-mode
+     'flyspell-mode-predicate
+     #'git-commit-ts--flyspell-verify)
 
 (provide 'git-commit-ts-mode)
 
