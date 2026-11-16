@@ -333,7 +333,7 @@ The underlined text will be highlighted using `git-commit-ts-branch-face'."
   "Tree-sitter font-lock settings for `git-commit-ts-mode'.")
 
 ;;;###autoload
-(define-derived-mode git-commit-ts-mode prog-mode "Git commit"
+(define-derived-mode git-commit-ts-mode text-mode "Git commit"
   (when (treesit-ready-p 'gitcommit)
     (treesit-parser-create 'gitcommit)
     (setq-local treesit-font-lock-settings git-commit-ts-font-lock-settings)
